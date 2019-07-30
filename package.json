@@ -5,11 +5,19 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "ele-serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
+  "main": "background.js",
   "dependencies": {
+    "add": "^2.0.6",
     "core-js": "^2.6.5",
+    "iview": "^3.4.2",
     "vue": "^2.6.10",
+    "vue-cli-plugin-iview": "^1.0.6",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
   },
@@ -19,10 +27,12 @@
     "@vue/cli-service": "^3.9.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "electron": "^5.0.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "vue-cli-plugin-electron-builder": "^1.3.6",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
