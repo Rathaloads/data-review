@@ -14,5 +14,18 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('@', resolve('src'))
+  },
+  pluginOptions: {
+    electronBuilder: {
+      builderOptions: {
+        win: {
+          icon: ''
+        },
+        mac: {
+          icon: ''
+        },
+        productName: '数据分析'
+      }
+    }
   }
 }

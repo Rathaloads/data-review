@@ -3,9 +3,13 @@
     <div class="login-wrap">
       <div class="login">
         <div class="title">登录</div>
-        <Form :label-width="60">
+        <Form
+          ref="form"
+          :model="form"
+          :label-width="60">
           <FormItem label="用户名:">
             <Input
+              v-model="form.account"
               size="small"
               style="width: 300px;"
               type="text"
@@ -13,6 +17,7 @@
           </FormItem>
           <FormItem label="密码:">
             <Input
+              v-model="form.password"
               size="small"
               style="width: 300px;"
               type="password"
@@ -23,7 +28,7 @@
             <Button
               size="small"
               type="primary"
-              @click.native="jumpApp">登录</Button>
+              @click.native="onSubmit">登录</Button>
           </FormItem>
         </Form>
       </div>
@@ -33,11 +38,36 @@
 
 <script>
 import { APPS } from '@/routers/route-names'
+import { mapGetters } from 'vuex'
+import { find } from 'lodash'
 
 export default {
   name: 'Login',
 
+  data () {
+    return {
+      form: {
+        account: '',
+        password: ''
+      }
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      users: 'appData/getUsers'
+    })
+  },
+
   methods: {
+    onSubmit () {
+      const { account, password } = this.form
+      if (account === '' || password === '') return this.$Message.error('请输入账号密码')
+      let finder = find(this.users, { account })
+      if (!finder) return this.$Message.error('账号不存在')
+      this.jumpApp()
+    },
+
     jumpApp () {
       this.$store.dispatch('menu/setActiveMenu', 'APPS_DATA_INPUT')
       this.$router.push({ name: APPS })
