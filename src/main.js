@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './routers/router'
-import store from './store'
 import iView from 'iview'
+import store from '@/store'
 import 'iview/dist/styles/iview.css'
 import './styles/reset.css'
 
