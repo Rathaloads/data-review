@@ -4,6 +4,7 @@ import Login from '../views/auth/login'
 
 import Apps from '../views/apps/index'
 import DataInput from '../views/apps/data-input'
+import DataInputDetail from '../views/apps/details'
 import DataReview from '../views/apps/data-review'
 
 export default [
@@ -34,6 +35,11 @@ export default [
         path: 'data-input',
         name: routeNames.APPS_DATA_INPUT,
         component: DataInput
+      },
+      {
+        path: 'data-input/:index/detail',
+        name: routeNames.APPS_DATA_INPUT_DETAIL,
+        component: DataInputDetail
       },
       {
         path: 'data-review',

@@ -1,7 +1,16 @@
 <template>
-  <div class="data-input-root">
+  <div class="main-root">
     <Card class="card">
-      <p slot="title">录入数据</p>
+      <div slot="title" class="title">
+        <Select v-model="seletData" style="width:200px" size="small">
+          <Option
+            v-for="(i, index) in selectOptions"
+            :key="index"
+            :value="i">
+            图{{i}}
+          </Option>
+        </Select>
+      </div>
       <div class="content">
         <Table
           border
@@ -17,62 +26,29 @@
       </div>
       <div class="foot">
         <Button type="primary" size="small">录入</Button>
-        <Button type="primary" size="small" class="ml10">记录</Button>
       </div>
     </Card>
 
     <Card class="card">
-      <p slot="title">表格一</p>
-      <div class="content">
-        <div class="group">
-          <div
-            v-for="(i, index) in groupsData"
-            :key="index"
-            class="item"
-            @click="jumpDetail(i)">
-            图{{ i }}
-          </div>
-        </div>
+      <div slot="title">
+        趋势走向
+        <Button type="primary" size="small" class="ml10">删除</Button>
+        <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
+        <Checkbox v-model="isAcrossTrend">横势</Checkbox>
       </div>
-    </Card>
-
-    <Card class="card">
-      <p slot="title">表格二</p>
       <div class="content">
-        <div class="group">
-          <div
-            v-for="(i, index) in singleGroupData"
-            :key="index"
-            class="item"
-            @click="jumpDetail(i)">
-            图{{ i }}
-          </div>
-        </div>
-      </div>
-    </Card>
-
-    <Card class="card">
-      <p slot="title">表格三</p>
-      <div class="content">
-        <div class="group">
-          <div
-            v-for="(i, index) in doubleGroupData"
-            :key="index"
-            class="item"
-            @click="jumpDetail(i)">
-            图{{ i }}
-          </div>
-        </div>
+        <Table
+          border
+          :columns="column"
+          :data="trendData"></Table>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
-import { APPS_DATA_INPUT_DETAIL } from '@/routers/route-names'
-
 export default {
-  name: 'DataInput',
+  name: 'Detail',
 
   data () {
     return {
@@ -90,7 +66,15 @@ export default {
           night: '',
           ten: ''
         }
-      ]
+      ],
+
+      seletData: '1',
+      // 趋势数据
+      trendData: [],
+      // 直势
+      isStraightTrend: false,
+      // 横势
+      isAcrossTrend: false
     }
   },
 
@@ -298,24 +282,73 @@ export default {
       ]
     },
 
-    // 组数据
-    groupsData () {
+    column () {
+      return [
+        {
+          type: 'selection',
+          width: 60
+        },
+        {
+          title: '次数',
+          key: 'index',
+          width: 80
+        },
+        {
+          title: '一',
+          key: 'one'
+        },
+        {
+          title: '二',
+          key: 'two'
+        },
+        {
+          title: '三',
+          key: 'three'
+        },
+        {
+          title: '四',
+          key: 'four'
+        },
+        {
+          title: '五',
+          key: 'five'
+        },
+        {
+          title: '六',
+          key: 'six'
+        },
+        {
+          title: '七',
+          key: 'seven'
+        },
+        {
+          title: '八',
+          key: 'eight'
+        },
+        {
+          title: '九',
+          key: 'night'
+        },
+        {
+          title: '十',
+          key: 'ten'
+        }
+      ]
+    },
+
+    selectOptions () {
       let arr = []
       for (let i = 1; i <= 200; i++) {
         arr.push(i)
       }
       return arr
-    },
-    // 单数数据
-    singleGroupData () {
-      let singles = this.groupsData.filter(i => i % 2 > 0)
-      return singles
-    },
-    // 双数数据
-    doubleGroupData () {
-      let doubles = this.groupsData.filter(i => i % 2 === 0)
-      return doubles
     }
+  },
+
+  mounted () {
+    // console.log(this.$route.params.index)
+    this.seletData = this.$route.params.index || 1
+    this.mockData()
   },
 
   methods: {
@@ -344,9 +377,23 @@ export default {
         return item
       })
     },
-
-    jumpDetail (index) {
-      this.$router.push({ name: APPS_DATA_INPUT_DETAIL, params: { index } })
+    // 造数据
+    mockData () {
+      for (let i = 0; i < 20; i++) {
+        this.trendData.push({
+          index: i + 1,
+          one: Math.floor(Math.random() * 10 + 1),
+          two: Math.floor(Math.random() * 10 + 1),
+          three: Math.floor(Math.random() * 10 + 1),
+          four: Math.floor(Math.random() * 10 + 1),
+          five: Math.floor(Math.random() * 10 + 1),
+          six: Math.floor(Math.random() * 10 + 1),
+          seven: Math.floor(Math.random() * 10 + 1),
+          eight: Math.floor(Math.random() * 10 + 1),
+          night: Math.floor(Math.random() * 10 + 1),
+          ten: Math.floor(Math.random() * 10 + 1)
+        })
+      }
     }
   }
 }
@@ -356,7 +403,8 @@ export default {
 .ml10 {
   margin-left 10px
 }
-.data-input-root {
+
+.main-root {
   width 100%
   padding 10px
   box-sizing border-box
@@ -366,32 +414,6 @@ export default {
 
     .content {
       width 100%
-
-      .group {
-        width 100%
-        height 100%
-        display flex
-        flex-wrap wrap
-        box-sizing border-box
-        padding 5px
-        .item {
-          width 40px
-          height 40px
-          box-sizing border-box
-          border 1px solid #333
-          text-align center
-          line-height 40px
-          font-size 12px
-          border-radius 5px
-          margin-top 5px
-          margin-left 5px
-          cursor pointer
-          &:hover {
-            background-color #f2f2f2
-            color #333
-          }
-        }
-      }
     }
 
     .options {
