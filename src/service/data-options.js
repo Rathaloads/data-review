@@ -9,7 +9,7 @@ const path = require('path')
  */
 function readFile (fileName) {
   return new Promise((resolve, reject) => {
-    console.log('路径:', path.resolve(__dirname, '../data'))
+    console.log('新路径:', path.dirname(process.execPath))
     let baseUrl = path.resolve(__dirname, '../data')
     let url = `${baseUrl}/${fileName}`
 

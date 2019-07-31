@@ -17,6 +17,7 @@
     "core-js": "^2.6.5",
     "iview": "^3.4.2",
     "lodash": "^4.17.15",
+    "nedb": "^1.8.0",
     "vue": "^2.6.10",
     "vue-cli-plugin-iview": "^1.0.6",
     "vue-router": "^3.0.3",
