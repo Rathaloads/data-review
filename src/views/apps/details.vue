@@ -2,7 +2,11 @@
   <div class="main-root">
     <Card class="card">
       <div slot="title" class="title">
-        <Select v-model="seletData" style="width:200px" size="small">
+        <Select
+          v-model="seletData"
+          style="width:200px"
+          size="small"
+          @on-change="onChange">
           <Option
             v-for="(i, index) in selectOptions"
             :key="index"
@@ -17,329 +21,103 @@
           :columns="col"
           :data="inputData"></Table>
       </div>
-      <div class="options">
-        <Icon
-          :size="20"
-          style="cursor: pointer;"
-          type="ios-add-circle-outline"
-          @click="addData" />
-      </div>
       <div class="foot">
-        <Button type="primary" size="small">录入</Button>
+        <Button
+          type="primary"
+          size="small"
+          @click.native="onIputData">录入</Button>
+        <Button
+          type="primary"
+          size="small"
+          class="ml10"
+          @click.native="onClear">删除</Button>
       </div>
     </Card>
 
     <Card class="card">
       <div slot="title">
         趋势走向
-        <Button type="primary" size="small" class="ml10">删除</Button>
         <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
         <Checkbox v-model="isAcrossTrend">横势</Checkbox>
       </div>
-      <div class="content">
-        <Table
-          border
-          :columns="column"
-          :data="trendData"></Table>
+      <div class="content" style="height: 600px;">
+        <DataTable
+          :id="seletData"
+          :tb-data="chartData"/>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
+import { CN_NUMBER } from '@/const/number'
+import DataTable from '@/components/data-table'
+import store from '@/service/store'
+import _ from 'lodash'
+
 export default {
   name: 'Detail',
 
+  components: {
+    DataTable
+  },
+
   data () {
     return {
-      inputData: [
-        {
-          index: 1,
-          one: '',
-          two: '',
-          three: '',
-          four: '',
-          five: '',
-          six: '',
-          seven: '',
-          eight: '',
-          night: '',
-          ten: ''
-        }
-      ],
+      inputData: [],
 
-      seletData: '1',
-      // 趋势数据
-      trendData: [],
+      seletData: '',
       // 直势
       isStraightTrend: false,
       // 横势
-      isAcrossTrend: false
+      isAcrossTrend: false,
+      // 显示的数据
+      chartData: []
     }
   },
 
   computed: {
     col () {
-      return [
+      let colArr = [
         {
           title: '次数',
           key: 'index'
-        },
-        {
-          title: '一',
-          key: 'one',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.one,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].one = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '二',
-          key: 'two',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.two,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].two = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '三',
-          key: 'three',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.three,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].three = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '四',
-          key: 'four',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.four,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].four = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '五',
-          key: 'five',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.five,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].five = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '六',
-          key: 'six',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.six,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].six = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '七',
-          key: 'seven',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.seven,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].seven = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '八',
-          key: 'eight',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.eight,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].eight = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '九',
-          key: 'night',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.night,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].night = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '十',
-          key: 'ten',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.ten,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].ten = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '操作',
-          render: (h, params) => {
-            let _this = this
-            return h('a', {
-              on: {
-                click: () => {
-                  if (_this.inputData.length === 1) return
-                  _this.removeData(params.row.index)
-                }
-              }
-            }, '删除')
-          }
         }
       ]
-    },
-
-    column () {
-      return [
-        {
-          type: 'selection',
-          width: 60
-        },
-        {
-          title: '次数',
-          key: 'index',
-          width: 80
-        },
-        {
-          title: '一',
-          key: 'one'
-        },
-        {
-          title: '二',
-          key: 'two'
-        },
-        {
-          title: '三',
-          key: 'three'
-        },
-        {
-          title: '四',
-          key: 'four'
-        },
-        {
-          title: '五',
-          key: 'five'
-        },
-        {
-          title: '六',
-          key: 'six'
-        },
-        {
-          title: '七',
-          key: 'seven'
-        },
-        {
-          title: '八',
-          key: 'eight'
-        },
-        {
-          title: '九',
-          key: 'night'
-        },
-        {
-          title: '十',
-          key: 'ten'
-        }
-      ]
+      for (let i = 0; i < CN_NUMBER.length; i++) {
+        colArr.push({
+          title: CN_NUMBER[i],
+          key: i + '',
+          render: (h, params) => {
+            let _this = this
+            return h('Input', {
+              props: {
+                value: params.row[i + ''],
+                size: 'small'
+              },
+              on: {
+                'input': (val) => {
+                  _this.inputData[params.index][i + ''] = val
+                }
+              },
+              nativeOn: {
+                'change': (ev) => {
+                  if (_this.checkData(params.index, ev.target.value, i + '')) {
+                    _this.inputData[params.index][i + ''] = ''
+                  }
+                }
+              }
+            })
+          }
+        })
+      }
+      return colArr
     },
 
     selectOptions () {
       let arr = []
       for (let i = 1; i <= 200; i++) {
-        arr.push(i)
+        arr.push(i + '')
       }
       return arr
     }
@@ -347,27 +125,28 @@ export default {
 
   mounted () {
     // console.log(this.$route.params.index)
-    this.seletData = this.$route.params.index || 1
-    this.mockData()
+    this.seletData = (this.$route.params.index || 1) + ''
+    console.log(this.$route.params.index)
+    this.init()
   },
 
   methods: {
-    addData () {
-      let defaultData = {
-        index: 1,
-        one: '',
-        two: '',
-        three: '',
-        four: '',
-        five: '',
-        six: '',
-        seven: '',
-        eight: '',
-        night: '',
-        ten: ''
+    init () {
+      let allData = store.get('charts')
+      let currentData = allData[this.seletData + ''] || []
+      let obj = {}
+      for (let i = 0; i < 10; i++) {
+        obj[i + ''] = ''
       }
-      defaultData.index = this.inputData.length + 1
-      this.inputData.push(defaultData)
+      if (currentData.length > 0) {
+        obj.index = currentData.length + 1
+      } else {
+        obj.index = 1
+      }
+      this.inputData = _.clone([obj])
+      this.chartData = currentData
+
+      console.log(currentData)
     },
 
     removeData (index) {
@@ -377,23 +156,49 @@ export default {
         return item
       })
     },
-    // 造数据
-    mockData () {
-      for (let i = 0; i < 20; i++) {
-        this.trendData.push({
-          index: i + 1,
-          one: Math.floor(Math.random() * 10 + 1),
-          two: Math.floor(Math.random() * 10 + 1),
-          three: Math.floor(Math.random() * 10 + 1),
-          four: Math.floor(Math.random() * 10 + 1),
-          five: Math.floor(Math.random() * 10 + 1),
-          six: Math.floor(Math.random() * 10 + 1),
-          seven: Math.floor(Math.random() * 10 + 1),
-          eight: Math.floor(Math.random() * 10 + 1),
-          night: Math.floor(Math.random() * 10 + 1),
-          ten: Math.floor(Math.random() * 10 + 1)
-        })
+    /**
+     * 数据校验
+     */
+    checkData (index, val, prop) {
+      if (!parseInt(val)) return false
+      let isExist = false
+      for (let key in this.inputData[index]) {
+        if (key !== 'index' && key !== prop) {
+          let num = parseInt(this.inputData[index][key])
+          if (num === parseInt(val)) {
+            console.log(parseInt(val), num)
+            isExist = true
+          }
+        }
       }
+      if (isExist) {
+        this.$Message.error('同一行的数字重复')
+      }
+      return isExist
+    },
+    /**
+     * 录入数据
+     */
+    onIputData () {
+      let arr = []
+      const { index, ...obj } = this.inputData[0]
+      for (let i = 0; i < 10; i++) {
+        arr.push(obj[i + ''])
+      }
+      if (arr.indexOf('') > -1) return this.$Message.error('请录入完整的数据')
+      this.chartData.push(arr)
+      store.set(`charts.${this.seletData + ''}`, this.chartData)
+      this.init()
+    },
+
+    onClear () {
+      store.set(`charts.${this.seletData + ''}`, [])
+      this.init()
+    },
+
+    onChange(val) {
+      this.seletData = val
+      this.init()
     }
   }
 }

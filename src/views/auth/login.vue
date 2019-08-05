@@ -38,8 +38,9 @@
 
 <script>
 import { APPS } from '@/routers/route-names'
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 import { find } from 'lodash'
+import store from '@/service/store'
 
 export default {
   name: 'Login',
@@ -54,9 +55,25 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      users: 'appData/getUsers'
-    })
+    // ...mapGetters({
+    //   users: 'appData/getUsers'
+    // })
+    users () {
+      return store.get('users')
+    }
+  },
+
+  mounted () {
+    let users = store.get('users')
+    console.log(users)
+    if (!users) {
+      store.set('users', [
+        {
+          account: 'admin',
+          pwd: '123456'
+        }
+      ])
+    }
   },
 
   methods: {
@@ -69,7 +86,7 @@ export default {
     },
 
     jumpApp () {
-      this.$store.dispatch('menu/setActiveMenu', 'APPS_DATA_INPUT')
+      // this.$store.dispatch('menu/setActiveMenu', 'APPS_DATA_INPUT')
       this.$router.push({ name: APPS })
     }
   }

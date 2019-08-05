@@ -8,16 +8,27 @@
           :columns="col"
           :data="inputData"></Table>
       </div>
-      <div class="options">
+      <!-- <div class="options">
         <Icon
           :size="20"
           style="cursor: pointer;"
           type="ios-add-circle-outline"
           @click="addData" />
-      </div>
+      </div> -->
       <div class="foot">
         <Button type="primary" size="small">录入</Button>
-        <Button type="primary" size="small" class="ml10">记录</Button>
+        <Button
+          type="primary"
+          size="small"
+          class="ml10">记录</Button>
+        <Button
+          type="primary"
+          class="ml10"
+          size="small">数据处理1</Button>
+        <Button
+          type="primary"
+          class="ml10"
+          size="small">数据处理2</Button>
       </div>
     </Card>
 
@@ -70,6 +81,7 @@
 
 <script>
 import { APPS_DATA_INPUT_DETAIL } from '@/routers/route-names'
+import { CN_NUMBER, EN_NUMBER } from '@/const/number'
 
 export default {
   name: 'DataInput',
@@ -78,7 +90,6 @@ export default {
     return {
       inputData: [
         {
-          index: 1,
           one: '',
           two: '',
           three: '',
@@ -96,206 +107,40 @@ export default {
 
   computed: {
     col () {
-      return [
+      let colArr = [
         {
           title: '次数',
-          key: 'index'
-        },
-        {
-          title: '一',
-          key: 'one',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.one,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].one = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '二',
-          key: 'two',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.two,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].two = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '三',
-          key: 'three',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.three,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].three = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '四',
-          key: 'four',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.four,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].four = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '五',
-          key: 'five',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.five,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].five = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '六',
-          key: 'six',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.six,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].six = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '七',
-          key: 'seven',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.seven,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].seven = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '八',
-          key: 'eight',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.eight,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].eight = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '九',
-          key: 'night',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.night,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].night = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '十',
-          key: 'ten',
-          render: (h, params) => {
-            let _this = this
-            return h('Input', {
-              props: {
-                value: params.row.ten,
-                size: 'small'
-              },
-              on: {
-                'input': (val) => {
-                  _this.inputData[params.index].ten = val
-                }
-              }
-            })
-          }
-        },
-        {
-          title: '操作',
-          render: (h, params) => {
-            let _this = this
-            return h('a', {
-              on: {
-                click: () => {
-                  if (_this.inputData.length === 1) return
-                  _this.removeData(params.row.index)
-                }
-              }
-            }, '删除')
-          }
+          type: 'index'
         }
       ]
+      for (let i = 0; i < CN_NUMBER.length; i++) {
+        colArr.push({
+          title: CN_NUMBER[i],
+          key: EN_NUMBER[i],
+          render: (h, params) => {
+            let _this = this
+            return h('Input', {
+              props: {
+                value: params.row[EN_NUMBER[i]],
+                size: 'small'
+              },
+              on: {
+                'input': (val) => {
+                  _this.inputData[params.index][EN_NUMBER[i]] = val
+                }
+              },
+              nativeOn: {
+                'change': (ev) => {
+                  if (_this.checkData(params.index, ev.target.value, EN_NUMBER[i])) {
+                    _this.inputData[params.index][EN_NUMBER[i]] = ''
+                  }
+                }
+              }
+            })
+          }
+        })
+      }
+      return colArr
     },
 
     // 组数据
@@ -347,6 +192,27 @@ export default {
 
     jumpDetail (index) {
       this.$router.push({ name: APPS_DATA_INPUT_DETAIL, params: { index } })
+    },
+
+    /**
+     * 数字校验
+     */
+    checkData (index, val, prop) {
+      if (!parseInt(val)) return false
+      let isExist = false
+      for (let key in this.inputData[index]) {
+        if (key !== 'index' && key !== prop) {
+          let num = parseInt(this.inputData[index][key])
+          if (num === parseInt(val)) {
+            console.log(parseInt(val), num)
+            isExist = true
+          }
+        }
+      }
+      if (isExist) {
+        this.$Message.error('同一行的数字重复')
+      }
+      return isExist
     }
   }
 }

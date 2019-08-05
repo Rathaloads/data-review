@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { APPS_DATA_INPUT, APPS_DATA_REVIEW, AUTH_LOGIN } from '@/routers/route-names'
+import { APPS_DATA_INPUT, AUTH_LOGIN } from '@/routers/route-names'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -37,11 +37,11 @@ export default {
           label: '数据录入',
           name: APPS_DATA_INPUT
         },
-        {
-          icon: 'md-build',
-          label: '数据统计',
-          name: APPS_DATA_REVIEW
-        },
+        // {
+        //   icon: 'md-build',
+        //   label: '数据统计',
+        //   name: APPS_DATA_REVIEW
+        // },
         {
           icon: 'ios-settings',
           label: '设置',

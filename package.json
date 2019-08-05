@@ -15,6 +15,7 @@
   "dependencies": {
     "add": "^2.0.6",
     "core-js": "^2.6.5",
+    "electron-store": "^4.0.0",
     "iview": "^3.4.2",
     "lodash": "^4.17.15",
     "nedb": "^1.8.0",
