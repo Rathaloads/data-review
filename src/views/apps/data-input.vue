@@ -33,7 +33,7 @@
     </Card>
 
     <Card class="card">
-      <p slot="title">表格一</p>
+      <p slot="title">全表</p>
       <div class="content">
         <div class="group">
           <div
@@ -48,14 +48,14 @@
     </Card>
 
     <Card class="card">
-      <p slot="title">表格二</p>
+      <p slot="title">奇数表</p>
       <div class="content">
         <div class="group">
           <div
-            v-for="(i, index) in singleGroupData"
+            v-for="(i, index) in groupsData"
             :key="index"
             class="item"
-            @click="jumpDetail(i)">
+            @click="jumpDetail(i, 'ODD_DATA')">
             图{{ i }}
           </div>
         </div>
@@ -63,14 +63,14 @@
     </Card>
 
     <Card class="card">
-      <p slot="title">表格三</p>
+      <p slot="title">偶数表</p>
       <div class="content">
         <div class="group">
           <div
-            v-for="(i, index) in doubleGroupData"
+            v-for="(i, index) in groupsData"
             :key="index"
             class="item"
-            @click="jumpDetail(i)">
+            @click="jumpDetail(i, 'EVEN_DATA')">
             图{{ i }}
           </div>
         </div>
@@ -190,8 +190,8 @@ export default {
       })
     },
 
-    jumpDetail (index) {
-      this.$router.push({ name: APPS_DATA_INPUT_DETAIL, params: { index } })
+    jumpDetail (index, dataType = 'ALL_DATA') {
+      this.$router.push({ name: APPS_DATA_INPUT_DETAIL, params: { index }, query: { type: dataType } })
     },
 
     /**

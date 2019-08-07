@@ -39,11 +39,24 @@
         趋势走向
         <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
         <Checkbox v-model="isAcrossTrend">横势</Checkbox>
+        <Checkbox v-model="seletedAll">全选</Checkbox>
+        <!-- <Checkbox v-model="isJi">奇数</Checkbox>
+        <Checkbox v-model="isOu">偶数</Checkbox> -->
+        <RadioGroup v-model="dataType">
+          <Radio
+            v-for="(item, index) in radioGroups"
+            :key="index"
+            :label="item.value">
+            <span>{{ item.label }}</span>
+          </Radio>
+        </RadioGroup>
       </div>
       <div class="content" style="height: 600px;">
         <DataTable
           :id="seletData"
-          :tb-data="chartData"/>
+          :tb-data="chartData"
+          :seleted-all="seletedAll"
+          :type="dataType"/>
       </div>
     </Card>
   </div>
@@ -71,8 +84,18 @@ export default {
       isStraightTrend: false,
       // 横势
       isAcrossTrend: false,
+      // 全选
+      seletedAll: false,
+      // 数据类型
+      dataType: 'ALL_DATA',
       // 显示的数据
-      chartData: []
+      chartData: [],
+
+      radioGroups: [
+        { label: '全部', value: 'ALL_DATA' },
+        { label: '奇数', value: 'ODD_DATA' },
+        { label: '偶数', value: 'EVEN_DATA' }
+      ]
     }
   },
 
@@ -126,7 +149,8 @@ export default {
   mounted () {
     // console.log(this.$route.params.index)
     this.seletData = (this.$route.params.index || 1) + ''
-    console.log(this.$route.params.index)
+    this.dataType = this.$route.query.type || 'ALL_DATA'
+    console.log('路由', this.$route.query)
     this.init()
   },
 

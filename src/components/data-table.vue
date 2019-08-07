@@ -15,9 +15,13 @@
         <tr>
           <th
             v-for="(item, index) in colNumberArr"
-            :key="index">
-            <Checkbox
-              @on-change="(val) => colChange(val, index)"
+            :key="index"
+            :class="{'last-td': (index + 1) % 10 === 0}">
+            <DataCheck
+              ref="check"
+              :value="item.selection"
+              :index="index"
+              @on-change="colChange"
               style="margin: 0 auto;"/>
           </th>
         </tr>
@@ -31,10 +35,11 @@
               @on-change="(val) => rowChange(val, index)"
               style="margin: 0 auto;"/>
           </td>
-          <td>{{ index + 1 }}</td>
+          <td>{{ item.index + 1 }}</td>
           <td
-            v-for="(num, i) in item"
-            :key="i">
+            v-for="(num, i) in item.value"
+            :key="i"
+            :class="{'last-td': (i + 1) % 10 === 0}">
             {{ num }}
           </td>
         </tr>
@@ -45,9 +50,15 @@
 
 <script>
 import { CN_NUMBER } from '@/const/number'
+import DataCheck from '@/components/data-check'
+import { DATA_TYPE } from '@/const/data-type'
 
 export default {
   name: 'DataTable',
+
+  components: {
+    DataCheck
+  },
 
   props: {
     id: {
@@ -57,6 +68,16 @@ export default {
     tbData: {
       type: Array,
       default: () => []
+    },
+    // 全选
+    seletedAll: {
+      type: Boolean,
+      default: false
+    },
+    // 数据类型
+    type: {
+      type: String,
+      default: DATA_TYPE.ALL_DATA
     }
   },
 
@@ -78,32 +99,50 @@ export default {
     colNumberArr () {
       let arr = []
       for (let i = 0; i < 100; i++) {
-        arr.push(i)
+        arr.push({
+          selection: this.seletedAll,
+          value: i
+        })
       }
       return arr
     },
 
     data () {
-      return this.tbData.map((arr, index) => {
+      let data = this.tbData.map((arr, index) => {
         let newArr = []
         for (let i = 0; i < 10; i++) {
           newArr.push(...arr)
         }
-        return newArr
+        return {
+          index,
+          value: newArr
+        }
+      })
+      return data.filter((val, index) => {
+        if (this.type === DATA_TYPE.EVEN_DATA || '') {
+          return (val.index + 1) % 2 === 0
+        } else if (this.type === DATA_TYPE.ODD_DATA) {
+          return (val.index + 1) % 3 === 0 || val.index === 0
+        } else {
+          return true
+        }
       })
     }
   },
 
+  watch: {
+  },
+
   methods: {
-    colChange (val, index) {
+    colChange ({ value, index }) {
       for (let i = 0; i < this.$refs.tbody.children.length; i++) {
         for (let j = 0; j < this.$refs.tbody.children[i].children.length; j++) {
           let col = this.$refs.tbody.children[i].children[j]
-          if (j === index + 2 && val) {
-            col.className = 'avtive-col'
+          if (j === index + 2 && value) {
+            col.className = (index + 1) % 10 === 0 ? 'last-td avtive-col' : 'avtive-col'
           }
-          if (j === index + 2 && !val) {
-            col.className = ''
+          if (j === index + 2 && !value) {
+            col.className = (index + 1) % 10 === 0 ? 'last-td' : ''
           }
         }
       }
@@ -138,14 +177,18 @@ export default {
       border 1px solid #ccc
       text-align center
       padding 5px
+      font-weight 700
+    }
+    .last-td {
+      border-right 2px solid #388E8E
     }
   }
   .avtive-col {
-    background-color #FF7F24;
+    background-color #00F5FF;
   }
   .avtive-row {
     td {
-      background-color #FF6A6A;
+      background-color #00EE00;
       color #333 !important;
     }
     .avtive-col {
