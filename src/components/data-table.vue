@@ -122,7 +122,7 @@ export default {
         if (this.type === DATA_TYPE.EVEN_DATA || '') {
           return (val.index + 1) % 2 === 0
         } else if (this.type === DATA_TYPE.ODD_DATA) {
-          return (val.index + 1) % 3 === 0 || val.index === 0
+          return (val.index + 1) % 2 > 0 || val.index === 0
         } else {
           return true
         }
