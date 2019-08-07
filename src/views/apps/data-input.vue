@@ -52,7 +52,7 @@
       <div class="content">
         <div class="group">
           <div
-            v-for="(i, index) in groupsData"
+            v-for="(i, index) in singleGroupData"
             :key="index"
             class="item"
             @click="jumpDetail(i, 'ODD_DATA')">
@@ -67,7 +67,7 @@
       <div class="content">
         <div class="group">
           <div
-            v-for="(i, index) in groupsData"
+            v-for="(i, index) in doubleGroupData"
             :key="index"
             class="item"
             @click="jumpDetail(i, 'EVEN_DATA')">
