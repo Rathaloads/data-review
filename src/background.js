@@ -81,25 +81,25 @@ function createWindow () {
  * 创建菜单栏
  */
 function createMenu () {
-  // if (process.platform === 'darwin') {
-  //   const template = [
-  //     {
-  //       label: 'App Demo',
-  //       submenu: [
-  //         {
-  //           role: 'about'
-  //         },
-  //         {
-  //           role: 'quit'
-  //         }
-  //       ]
-  //     }
-  //   ]
-  //   let menu = Menu.buildFromTemplate(template)
-  //   Menu.setApplicationMenu(menu)
-  // } else {
-  //   Menu.setApplicationMenu(null)
-  // }
+  if (process.platform === 'darwin') {
+    const template = [
+      {
+        label: 'App Demo',
+        submenu: [
+          {
+            role: 'about'
+          },
+          {
+            role: 'quit'
+          }
+        ]
+      }
+    ]
+    let menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+  } else {
+    Menu.setApplicationMenu(null)
+  }
 }
 
 // Quit when all windows are closed.
