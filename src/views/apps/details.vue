@@ -148,14 +148,9 @@ export default {
 
   mounted () {
     // console.log(this.$route.params.index)
-<<<<<<< HEAD
     this.seletData = (this.$route.params.index || 1) + ''
     this.dataType = this.$route.query.type || 'ALL_DATA'
     console.log('路由', this.$route.query)
-=======
-    this.seletData = (this.$route.params.index || '1') + ''
-    console.log(this.$route.params.index)
->>>>>>> style:提交一下
     this.init()
   },
 

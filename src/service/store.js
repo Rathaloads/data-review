@@ -1,12 +1,10 @@
 import Store from 'electron-store'
-// import { app } from 'electron'
-
-// console.log('输出:', app.getPath('userdata'))
+import { app } from 'electron'
 
 const options = {
   name: 'data',
   fileExtension: 'json',
-  // cwd: app.getPath('userdata'),
+  cwd: app.getPath('userdata'),
   clearInvalidConfig: true
 }
 
