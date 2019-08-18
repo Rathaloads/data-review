@@ -17,6 +17,7 @@ module.exports = {
     'space-before-function-paren': 0,
     // 忽略大括号内的空格
     'object-curly-spacing': 0,
+    'operator-linebreak': ['error', 'none']
   },
   parserOptions: {
     parser: 'babel-eslint'

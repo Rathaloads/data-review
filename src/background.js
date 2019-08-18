@@ -15,7 +15,7 @@ let win
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
 
 function createWindow () {
-  createMenu()
+  // createMenu()
 
   // 注册通信
   /**

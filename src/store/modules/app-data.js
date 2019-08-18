@@ -1,62 +1,57 @@
-import {
-  SET_USERS,
-  SET_DATA
-} from '../mutation-types'
-
-import { ipcRenderer } from 'electron'
+import * as types from '../mutation-types'
+import store from '@/service/store'
+import _ from 'lodash'
 
 const state = {
-  users: [],
-  datas: []
+  users: null,
+  origin_data: null,
+  cache_data: null
 }
 
 const getters = {
-  getUsers: () => state.users,
-  getDatas: () => state.datas
+  getOriginData: (state) => state.origin_data,
+
+  getCacheData: (state) => state.cache_data,
+
+  getUsers: (state) => state.users
 }
 
 const mutations = {
+  // 设置源数据
+  [types.APP_DATA_SET_ORIGIN_DATA] (state, data) {
+    state.origin_data = _.clone(data)
+  },
+  // 设置缓存数据
+  [types.APP_DATA_SET_CACHE_DATA] (state, data) {
+    state.cache_data = data
+  },
   // 设置用户数据
-  [SET_USERS] (state, data) {
+  [types.SET_USERS] (state, data) {
     state.users = data
   },
-  // 设置表格数据
-  [SET_DATA] (state, data) {
-    state.datas = data
+  // 同步数据
+  [types.APP_DATA_SYNC_ORIGIN_DATA] (state) {
+    store.set('charts', state.origin_data)
   }
 }
 
 const actions = {
-  /**
-   * 获取用户数据
-   */
-  getUserData ({ commit }) {
-    ipcRenderer.send('getLocalUser')
-    ipcRenderer.on('replayLocalUser', (event, args) => {
-      const { data: { Users } } = args
-      commit(SET_USERS, Users)
-    })
+  // 获取源
+  fetchOriginData ({ commit }) {
+    let data = store.get('charts')
+    commit(types.APP_DATA_SET_ORIGIN_DATA, data)
   },
-
-  // 获取表格数据
-  getDatas ({ commit }) {
-    ipcRenderer.send('getLocalData')
-    ipcRenderer.on('replayLocalData', (event, args) => {
-      const { data: { Data } } = args
-      commit(SET_DATA, Data)
-    })
+  // 设置缓存数据
+  setCacheData ({ commit }, data) {
+    commit(types.APP_DATA_SET_CACHE_DATA, data)
   },
-
-  // 设置用户数据
-  setUserData ({ commit }, data) {
-    ipcRenderer.send('updateLocalUser', { Users: data })
-    ipcRenderer.on('replayUpdateUser', (event, args) => {})
+  // 设置源数据
+  setOriginData ({ commit }, data) {
+    commit(types.APP_DATA_SET_ORIGIN_DATA, data)
   },
-
-  // 设置表格数据
-  setDatas ({ commit }, data) {
-    ipcRenderer.send('updateLocalData', { Data: data })
-    ipcRenderer.on('replayUpdateData', (event, args) => {})
+  // 同步数据
+  syncOriginData ({ commit }) {
+    commit(types.APP_DATA_SYNC_ORIGIN_DATA)
   }
 }
 

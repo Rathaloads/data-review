@@ -8,15 +8,8 @@
           :columns="col"
           :data="inputData"></Table>
       </div>
-      <!-- <div class="options">
-        <Icon
-          :size="20"
-          style="cursor: pointer;"
-          type="ios-add-circle-outline"
-          @click="addData" />
-      </div> -->
       <div class="foot">
-        <Button type="primary" size="small">录入</Button>
+        <Button type="primary" size="small" @click.native="addData">录入</Button>
         <Button
           type="primary"
           size="small"
@@ -24,11 +17,11 @@
         <Button
           type="primary"
           class="ml10"
-          size="small">数据处理1</Button>
-        <Button
+          size="small">历史记录</Button>
+        <!-- <Button
           type="primary"
           class="ml10"
-          size="small">数据处理2</Button>
+          size="small">数据处理2</Button> -->
       </div>
     </Card>
 
@@ -41,7 +34,7 @@
             :key="index"
             class="item"
             @click="jumpDetail(i)">
-            图{{ i }}
+            图{{ i + 1 }}
           </div>
         </div>
       </div>
@@ -56,7 +49,7 @@
             :key="index"
             class="item"
             @click="jumpDetail(i, 'ODD_DATA')">
-            图{{ i }}
+            图{{ i + 1 }}
           </div>
         </div>
       </div>
@@ -71,7 +64,7 @@
             :key="index"
             class="item"
             @click="jumpDetail(i, 'EVEN_DATA')">
-            图{{ i }}
+            图{{ i + 1 }}
           </div>
         </div>
       </div>
@@ -82,6 +75,7 @@
 <script>
 import { APPS_DATA_INPUT_DETAIL } from '@/routers/route-names'
 import { CN_NUMBER, EN_NUMBER } from '@/const/number'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'DataInput',
@@ -106,6 +100,9 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      getCacheData: 'cacheData/getData'
+    }),
     col () {
       let colArr = [
         {
@@ -146,20 +143,18 @@ export default {
     // 组数据
     groupsData () {
       let arr = []
-      for (let i = 1; i <= 200; i++) {
+      for (let i = 0; i < 200; i++) {
         arr.push(i)
       }
       return arr
     },
     // 单数数据
     singleGroupData () {
-      let singles = this.groupsData.filter(i => i % 2 > 0)
-      return singles
+      return this.groupsData
     },
     // 双数数据
     doubleGroupData () {
-      let doubles = this.groupsData.filter(i => i % 2 === 0)
-      return doubles
+      return this.groupsData
     }
   },
 

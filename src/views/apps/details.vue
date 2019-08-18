@@ -11,7 +11,7 @@
             v-for="(i, index) in selectOptions"
             :key="index"
             :value="i">
-            图{{i}}
+            图{{i + 1}}
           </Option>
         </Select>
       </div>
@@ -30,43 +30,55 @@
           type="primary"
           size="small"
           class="ml10"
-          @click.native="onClear">删除</Button>
+          @click.native="showModal = true">删除</Button>
       </div>
     </Card>
 
     <Card class="card">
       <div slot="title">
-        趋势走向
+        趋势走向:
         <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
         <Checkbox v-model="isAcrossTrend">横势</Checkbox>
         <Checkbox v-model="seletedAll">全选</Checkbox>
         <!-- <Checkbox v-model="isJi">奇数</Checkbox>
         <Checkbox v-model="isOu">偶数</Checkbox> -->
+        数据显示:
         <RadioGroup v-model="dataType">
           <Radio
             v-for="(item, index) in radioGroups"
             :key="index"
-            :label="item.value">
+            :label="index">
             <span>{{ item.label }}</span>
           </Radio>
         </RadioGroup>
       </div>
       <div class="content" style="height: 600px;">
-        <DataTable
+        <!-- <DataTable
           :id="seletData"
           :tb-data="chartData"
           :seleted-all="seletedAll"
-          :type="dataType"/>
+          :type="dataType"/> -->
+
+        <DataTable
+          :trend="0"
+          :rowType="dataType"
+          :data="chartData"></DataTable>
       </div>
     </Card>
+    <Modal
+      v-model="showModal"
+      title="警告"
+      @on-ok="onClear">
+      <p>该操作将删除本图下的所有数据，是否继续?</p>
+    </Modal>
   </div>
 </template>
 
 <script>
 import { CN_NUMBER } from '@/const/number'
 import DataTable from '@/components/data-table'
-import store from '@/service/store'
 import _ from 'lodash'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Detail',
@@ -87,19 +99,24 @@ export default {
       // 全选
       seletedAll: false,
       // 数据类型
-      dataType: 'ALL_DATA',
+      dataType: 0,
       // 显示的数据
       chartData: [],
 
       radioGroups: [
-        { label: '全部', value: 'ALL_DATA' },
-        { label: '奇数', value: 'ODD_DATA' },
-        { label: '偶数', value: 'EVEN_DATA' }
-      ]
+        { label: '全部', value: 0 },
+        { label: '奇数', value: 1 },
+        { label: '偶数', value: 2 }
+      ],
+      showModal: false
     }
   },
 
   computed: {
+    ...mapGetters({
+      originData: 'appData/getOriginData'
+    }),
+
     col () {
       let colArr = [
         {
@@ -139,25 +156,24 @@ export default {
 
     selectOptions () {
       let arr = []
-      for (let i = 1; i <= 200; i++) {
-        arr.push(i + '')
+      for (let i = 0; i < 200; i++) {
+        arr.push(i)
       }
       return arr
     }
   },
 
   mounted () {
-    // console.log(this.$route.params.index)
-    this.seletData = (this.$route.params.index || 1) + ''
-    this.dataType = this.$route.query.type || 'ALL_DATA'
-    console.log('路由', this.$route.query)
+    this.seletData = (this.$route.params.index || 1)
+    // this.dataType = this.$route.query.type || 'ALL_DATA'
+    console.log('路由', this.$route.params.index)
     this.init()
   },
 
   methods: {
     init () {
-      let allData = store.get('charts')
-      let currentData = allData ? (allData[this.seletData + ''] ?  allData[this.seletData + ''] : []) : []
+      let allData = this.originData
+      let currentData = allData ? (allData[this.seletData] ? allData[this.seletData] : []) : []
       let obj = {}
       for (let i = 0; i < 10; i++) {
         obj[i + ''] = ''
@@ -169,16 +185,6 @@ export default {
       }
       this.inputData = _.clone([obj])
       this.chartData = currentData
-
-      console.log(currentData)
-    },
-
-    removeData (index) {
-      let newData = this.inputData.filter(item => item.index !== index)
-      this.inputData = newData.map((item, index) => {
-        item.index = index + 1
-        return item
-      })
     },
     /**
      * 数据校验
@@ -210,18 +216,27 @@ export default {
         arr.push(obj[i + ''])
       }
       if (arr.indexOf('') > -1) return this.$Message.error('请录入完整的数据')
-      this.chartData.push(arr)
-      store.set(`charts.${this.seletData + ''}`, this.chartData)
+      console.log('录入的数据:', arr)
+      let origin = _.clone(this.originData)
+      origin[this.seletData].push(arr)
+
+      this.$store.dispatch('appData/setOriginData', origin)
+      this.$store.dispatch('appData/syncOriginData')
       this.init()
     },
 
     onClear () {
-      store.set(`charts.${this.seletData + ''}`, [])
+      let data = _.clone(this.originData)
+      data[this.seletData] = []
+      this.$store.dispatch('appData/setOriginData', data)
+      this.$store.dispatch('appData/syncOriginData')
       this.init()
+      this.showModal = false
     },
 
     onChange(val) {
       this.seletData = val
+      console.log(this.seletData)
       this.init()
     }
   }
