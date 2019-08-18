@@ -42,7 +42,7 @@
           <td
             v-for="(item, i) in arr"
             :key="i"
-            :class="{'last-td': (i + 1) % 10 === 0, 'avtive-col': colSeleted.includes(i)}">
+            :class="{'last-td': (i + 1) % 10 === 0, 'avtive-col': colSeleted.includes(i), 'avtive-col-ver': item.vertiTrend || item.horiTrend}">
             {{ item.value }}
           </td>
         </tr>
@@ -64,7 +64,7 @@ export default {
   },
 
   props: {
-    // 走势: 0-无势, 1-横势，2-斜势
+    // 走势: 0-无势, 1-直势，2-斜势
     trend: {
       type: Number,
       default: 0
@@ -128,11 +128,57 @@ export default {
             order: rowIndex,
             rowSeleted: isRowCheck,
             colSeleted: isColCheck,
-            asyncSeleted: false
+            asyncSeleted: false,
+            horiTrend: false, // 横式显示
+            vertiTrend: false // 竖式显示
           }
         })
         return colDatas
       })
+      // 直势，斜势的显示
+      if (!this.trend) return data
+      // 直势
+      if (this.trend === 1) {
+        console.log('进来了....')
+        for (let i = 0; i < data.length; i++) {
+          // 行
+          for (let j = 0; j < data[i].length; j++) {
+            // 列
+            if (data[i + 1] && data[i + 2]) {
+              if (data[i][j].value === data[i + 1][j].value && data[i][j].value === data[i + 2][j].value) {
+                data[i][j].vertiTrend = true
+                data[i + 1][j].vertiTrend = true
+                data[i + 2][j].vertiTrend = true
+              }
+            }
+          }
+        }
+        return data
+      }
+      // 斜势
+      if (this.trend === 2) {
+        for (let i = 0; i < data.length; i++) {
+          // 行
+          for (let j = 0; j < data[i].length; j++) {
+            // 列
+            if (data[i + 1] && data[i + 2] && j > 1 && j < data[i].length - 2) {
+              // 判断左斜
+              if (data[i][j].value === data[i + 1][j - 1].value && data[i][j].value === data[i + 2][j - 2].value) {
+                data[i][j].horiTrend = true
+                data[i + 1][j - 1].horiTrend = true
+                data[i + 2][j - 2].horiTrend = true
+              }
+              // 判断右斜
+              if (data[i][j].value === data[i + 1][j + 1].value && data[i][j].value === data[i + 2][j + 2].value) {
+                data[i][j].vertiTrend = true
+                data[i + 1][j + 1].vertiTrend = true
+                data[i + 2][j + 2].vertiTrend = true
+              }
+            }
+          }
+        }
+        return data
+      }
       return data
     }
   },
@@ -197,6 +243,9 @@ export default {
     }
     .last-td {
       border-right 2px solid #388E8E
+    }
+    .avtive-col-ver {
+      background-color #FFFF00 !important;
     }
   }
   .avtive-col {

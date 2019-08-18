@@ -37,9 +37,20 @@
     <Card class="card">
       <div slot="title">
         趋势走向:
-        <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
+        <RadioGroup v-model="trendType" class="ml10">
+          <Radio :label="0">
+            <span>正常</span>
+          </Radio>
+          <Radio :label="1">
+            <span>直势</span>
+          </Radio>
+          <Radio :label="2">
+            <span>斜势</span>
+          </Radio>
+        </RadioGroup>
+        <!-- <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
         <Checkbox v-model="isAcrossTrend">横势</Checkbox>
-        <Checkbox v-model="seletedAll">全选</Checkbox>
+        <Checkbox v-model="seletedAll">全选</Checkbox> -->
         <!-- <Checkbox v-model="isJi">奇数</Checkbox>
         <Checkbox v-model="isOu">偶数</Checkbox> -->
         数据显示:
@@ -60,7 +71,7 @@
           :type="dataType"/> -->
 
         <DataTable
-          :trend="0"
+          :trend="trendType"
           :rowType="dataType"
           :data="chartData"></DataTable>
       </div>
@@ -102,6 +113,8 @@ export default {
       dataType: 0,
       // 显示的数据
       chartData: [],
+      // 走势类型
+      trendType: 0,
 
       radioGroups: [
         { label: '全部', value: 0 },
@@ -160,6 +173,15 @@ export default {
         arr.push(i)
       }
       return arr
+    }
+  },
+
+  watch: {
+    trendType (val) {
+      if (val) this.dataType = 0
+    },
+    dataType (val) {
+      if (val) this.trendType = 0
     }
   },
 
