@@ -49,6 +49,7 @@
           <div
             v-for="(i, index) in singleGroupData"
             :key="index"
+            :class="{'active-chart': analyOddChartIndex.includes(index) }"
             class="item"
             @click="jumpDetail(i, 'ODD_DATA')">
             图{{ i + 1 }}
@@ -64,6 +65,7 @@
           <div
             v-for="(i, index) in doubleGroupData"
             :key="index"
+            :class="{'active-chart': analyEvenChartIndex.includes(index) }"
             class="item"
             @click="jumpDetail(i, 'EVEN_DATA')">
             图{{ i + 1 }}
@@ -110,6 +112,10 @@ export default {
       ],
       // 有横势斜势的图编号
       activeChart: [],
+      // 偶数图判断
+      evenActiveChart: [],
+      // 奇数图判断
+      oddActiveChart: [],
       showModel: false
     }
   },
@@ -175,6 +181,12 @@ export default {
     // 分析后的活动数据
     analyChartIndex () {
       return [...new Set(this.activeChart)]
+    },
+    analyEvenChartIndex () {
+      return [...new Set(this.evenActiveChart)]
+    },
+    analyOddChartIndex () {
+      return [...new Set(this.oddActiveChart)]
     }
   },
 
@@ -261,6 +273,18 @@ export default {
             if ((chart[rowIndex][colIndex] === cacheData[rowIndex][colIndex] + '') && (chart[rowIndex + 1][colIndex] === cacheData[rowIndex + 1][colIndex] + '') && (chart[rowIndex + 2][colIndex] === cacheData[rowIndex + 2][colIndex] + '')) {
               console.log('判断成功!')
               this.activeChart.push(i)
+            }
+            if (rowIndex + 2 >= cacheData.length - 1) continue
+            // 偶数行判断
+            if (((rowIndex + 1) % 2 === 0) && (chart[rowIndex][colIndex] === cacheData[rowIndex][colIndex] + '') && (chart[rowIndex + 2][colIndex] === cacheData[rowIndex + 2][colIndex] + '') && (chart[rowIndex + 4][colIndex] === cacheData[rowIndex + 4][colIndex] + '')) {
+              console.log('偶数判断成功!')
+              this.evenActiveChart.push(i)
+            }
+            if (rowIndex + 3 >= cacheData.length - 1) continue
+            // 奇数行判断
+            if (((rowIndex + 1) % 2 > 0)(chart[rowIndex][colIndex] === cacheData[rowIndex][colIndex] + '') && (chart[rowIndex + 2][colIndex] === cacheData[rowIndex + 2][colIndex] + '') && (chart[rowIndex + 4][colIndex] === cacheData[rowIndex + 4][colIndex] + '')) {
+              console.log('奇数判断成功!')
+              this.oddActiveChart.push(i)
             }
           }
         }
@@ -362,6 +386,10 @@ export default {
 
   .active-chart {
     background-color #FFFF00
+    &:hover {
+      background-color #FFFF00 !important
+      color #333
+    }
   }
 }
 </style>
