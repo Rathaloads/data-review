@@ -13,11 +13,12 @@
         <Button
           type="primary"
           size="small"
-          class="ml10">记录</Button>
-        <Button
+          class="ml10"
+          @click.native="showModel = true">记录</Button>
+        <!-- <Button
           type="primary"
           class="ml10"
-          size="small">历史记录</Button>
+          size="small">历史记录</Button> -->
         <!-- <Button
           type="primary"
           class="ml10"
@@ -33,6 +34,7 @@
             v-for="(i, index) in groupsData"
             :key="index"
             class="item"
+            :class="{'active-chart': analyChartIndex.includes(index) }"
             @click="jumpDetail(i)">
             图{{ i + 1 }}
           </div>
@@ -69,6 +71,10 @@
         </div>
       </div>
     </Card>
+
+    <DataModel
+      :show="showModel"
+      @on-cancel="onModelCancel"/>
   </div>
 </template>
 
@@ -76,14 +82,20 @@
 import { APPS_DATA_INPUT_DETAIL } from '@/routers/route-names'
 import { CN_NUMBER, EN_NUMBER } from '@/const/number'
 import { mapGetters } from 'vuex'
+import DataModel from '@/components/data-model'
 
 export default {
   name: 'DataInput',
+
+  components: {
+    DataModel
+  },
 
   data () {
     return {
       inputData: [
         {
+          index: this.getCacheData ? this.getCacheData.length + 1 : 1,
           one: '',
           two: '',
           three: '',
@@ -95,19 +107,23 @@ export default {
           night: '',
           ten: ''
         }
-      ]
+      ],
+      // 有横势斜势的图编号
+      activeChart: [],
+      showModel: false
     }
   },
 
   computed: {
     ...mapGetters({
-      getCacheData: 'cacheData/getData'
+      getCacheData: 'appData/getCacheData',
+      getOriginData: 'appData/getOriginData'
     }),
     col () {
       let colArr = [
         {
           title: '次数',
-          type: 'index'
+          key: 'index'
         }
       ]
       for (let i = 0; i < CN_NUMBER.length; i++) {
@@ -155,13 +171,40 @@ export default {
     // 双数数据
     doubleGroupData () {
       return this.groupsData
+    },
+    // 分析后的活动数据
+    analyChartIndex () {
+      return [...new Set(this.activeChart)]
     }
+  },
+
+  mounted () {
+    this.inputData = [{
+      index: this.getCacheData ? this.getCacheData.length + 1 : 1,
+      one: '',
+      two: '',
+      three: '',
+      four: '',
+      five: '',
+      six: '',
+      seven: '',
+      eight: '',
+      night: '',
+      ten: ''
+    }]
+    this.analyChart()
   },
 
   methods: {
     addData () {
+      let cache = this.getCacheData || []
+      const data = this.inputData[0]
+      console.log('debug:', data)
+      const { one, two, three, four, five, six, seven, eight, night, ten } = data
+      cache.push([one, two, three, four, five, six, seven, eight, night, ten])
+      this.$store.dispatch('appData/setCacheData', cache)
       let defaultData = {
-        index: 1,
+        index: this.getCacheData.length + 1,
         one: '',
         two: '',
         three: '',
@@ -173,8 +216,55 @@ export default {
         night: '',
         ten: ''
       }
-      defaultData.index = this.inputData.length + 1
-      this.inputData.push(defaultData)
+      this.inputData = [defaultData]
+      this.analyChart()
+    },
+
+    onModelCancel () {
+      this.showModel = false
+      let defaultData = {
+        index: this.getCacheData.length + 1,
+        one: '',
+        two: '',
+        three: '',
+        four: '',
+        five: '',
+        six: '',
+        seven: '',
+        eight: '',
+        night: '',
+        ten: ''
+      }
+      this.inputData = [defaultData]
+    },
+
+    /**
+     * 分析数据
+     */
+    analyChart () {
+      // 源数据
+      const originData = this.getOriginData
+      // 录入数据
+      const cacheData = this.getCacheData
+      if (cacheData.length < 3) return
+      for (let i = 0; i < originData.length; i++) {
+        if (!originData[i].length) continue
+        let chart = originData[i]
+        // 直势判断
+        for (let colIndex = 0; colIndex < 10; colIndex++) {
+          for (let rowIndex = 0; rowIndex < cacheData.length - 1; rowIndex++) {
+            if (rowIndex + 1 >= cacheData.length - 1) continue
+            // 如果图里面垂直方向的三个数与录入的数据的垂直方向三个数相同
+            console.log(`====================图${i}第${colIndex}列=========================`)
+            console.log('图:', chart[rowIndex][colIndex], chart[rowIndex + 1][colIndex], chart[rowIndex + 2][colIndex])
+            console.log('录入:', cacheData[rowIndex][colIndex], cacheData[rowIndex + 1][colIndex], cacheData[rowIndex + 2][colIndex])
+            if ((chart[rowIndex][colIndex] === cacheData[rowIndex][colIndex] + '') && (chart[rowIndex + 1][colIndex] === cacheData[rowIndex + 1][colIndex] + '') && (chart[rowIndex + 2][colIndex] === cacheData[rowIndex + 2][colIndex] + '')) {
+              console.log('判断成功!')
+              this.activeChart.push(i)
+            }
+          }
+        }
+      }
     },
 
     removeData (index) {
@@ -268,6 +358,10 @@ export default {
       padding-top 10px
       padding-bottom 10px
     }
+  }
+
+  .active-chart {
+    background-color #FFFF00
   }
 }
 </style>
