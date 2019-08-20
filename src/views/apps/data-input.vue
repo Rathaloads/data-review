@@ -212,11 +212,14 @@ export default {
       let cache = this.getCacheData || []
       const data = this.inputData[0]
       console.log('debug:', data)
+      for (let key in data) {
+        if (!data[key] || data[key] === '') return this.$Message.error('请录入完整数据')
+      }
       const { one, two, three, four, five, six, seven, eight, night, ten } = data
       cache.push([one, two, three, four, five, six, seven, eight, night, ten])
       this.$store.dispatch('appData/setCacheData', cache)
       let defaultData = {
-        index: this.getCacheData.length + 1,
+        index: this.getCacheData ? this.getCacheData.length + 1 : 1,
         one: '',
         two: '',
         three: '',
@@ -235,7 +238,7 @@ export default {
     onModelCancel () {
       this.showModel = false
       let defaultData = {
-        index: this.getCacheData.length + 1,
+        index: this.getCacheData ? this.getCacheData.length + 1 : 1,
         one: '',
         two: '',
         three: '',
@@ -248,6 +251,7 @@ export default {
         ten: ''
       }
       this.inputData = [defaultData]
+      this.analyChart()
     },
 
     /**
@@ -257,7 +261,7 @@ export default {
       // 源数据
       const originData = this.getOriginData
       // 录入数据
-      const cacheData = this.getCacheData
+      const cacheData = this.getCacheData || []
       if (cacheData.length < 3) return
       for (let i = 0; i < originData.length; i++) {
         if (!originData[i].length) continue
@@ -267,9 +271,9 @@ export default {
           for (let rowIndex = 0; rowIndex < cacheData.length - 1; rowIndex++) {
             if (rowIndex + 1 >= cacheData.length - 1) continue
             // 如果图里面垂直方向的三个数与录入的数据的垂直方向三个数相同
-            console.log(`====================图${i}第${colIndex}列=========================`)
-            console.log('图:', chart[rowIndex][colIndex], chart[rowIndex + 1][colIndex], chart[rowIndex + 2][colIndex])
-            console.log('录入:', cacheData[rowIndex][colIndex], cacheData[rowIndex + 1][colIndex], cacheData[rowIndex + 2][colIndex])
+            // console.log(`====================图${i}第${colIndex}列=========================`)
+            // console.log('图:', chart[rowIndex][colIndex], chart[rowIndex + 1][colIndex], chart[rowIndex + 2][colIndex])
+            // console.log('录入:', cacheData[rowIndex][colIndex], cacheData[rowIndex + 1][colIndex], cacheData[rowIndex + 2][colIndex])
             if ((chart[rowIndex][colIndex] === cacheData[rowIndex][colIndex] + '') && (chart[rowIndex + 1][colIndex] === cacheData[rowIndex + 1][colIndex] + '') && (chart[rowIndex + 2][colIndex] === cacheData[rowIndex + 2][colIndex] + '')) {
               console.log('判断成功!')
               this.activeChart.push(i)

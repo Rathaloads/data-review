@@ -42,7 +42,7 @@
           <td
             v-for="(item, i) in arr"
             :key="i"
-            :class="{'last-td': (i + 1) % 10 === 0, 'avtive-col': colSeleted.includes(i), 'avtive-col-ver': item.vertiTrend || item.horiTrend}">
+            :class="{'last-td': (i + 1) % 10 === 0, 'avtive-col': colSeleted.includes(i), 'avtive-col-ver': item.asyncSeleted }">
             {{ item.value }}
           </td>
         </tr>
@@ -54,6 +54,7 @@
 <script>
 import { CN_NUMBER } from '@/const/number'
 import DataCheck from '@/components/data-check'
+import { mapGetters } from 'vuex'
 // import { DATA_TYPE } from '@/const/data-type'
 
 export default {
@@ -91,6 +92,9 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      getCacheData: 'appData/getCacheData'
+    }),
     enNumber () {
       let arr = []
       for (let i = 0; i < CN_NUMBER.length; i++) {
@@ -114,71 +118,37 @@ export default {
     optionsData () {
       // 根据源数据生成操作数据
       let data = this.data.map((rowDatas, rowIndex) => {
-        // 行
-        let isRowCheck = this.rowSeleted.includes(rowIndex)
-        let arr = []
-        for (let i = 0; i < 10; i++) {
-          arr.push(...rowDatas)
-        }
-        let colDatas = arr.map((col, colIndex) => {
-          // 列
-          let isColCheck = this.colSeleted.includes(colIndex)
-          return {
-            value: col,
+        let isRowCheck = this.rowSeleted.includes(rowIndex) // 判断某次有没有被选中
+        let rowDataObjs = []
+        // 循环列
+        for (let i = 0; i < rowDatas.length; i++) {
+          // 分析数据
+          let colObj = {
+            value: rowDatas[i],
             order: rowIndex,
             rowSeleted: isRowCheck,
-            colSeleted: isColCheck,
             asyncSeleted: false,
             horiTrend: false, // 横式显示
             vertiTrend: false // 竖式显示
           }
+          if (this.getCacheData && this.getCacheData[rowIndex] && this.getCacheData[rowIndex][i] === rowDatas[i]) {
+            colObj.asyncSeleted = true
+          }
+          rowDataObjs.push(colObj)
+        }
+        // 行
+        let arr = []
+        for (let i = 0; i < 10; i++) {
+          arr.push(...rowDataObjs) // 每轮数据复制十次
+        }
+        let colDatas = arr.map((col, colIndex) => {
+          // 列
+          let isColCheck = this.colSeleted.includes(colIndex) // 判断某一列有没有被选中
+          col.colSeleted = isColCheck
+          return col
         })
         return colDatas
       })
-      // 直势，斜势的显示
-      if (!this.trend) return data
-      // 直势
-      if (this.trend === 1) {
-        console.log('进来了....')
-        for (let i = 0; i < data.length; i++) {
-          // 行
-          for (let j = 0; j < data[i].length; j++) {
-            // 列
-            if (data[i + 1] && data[i + 2]) {
-              if (data[i][j].value === data[i + 1][j].value && data[i][j].value === data[i + 2][j].value) {
-                data[i][j].vertiTrend = true
-                data[i + 1][j].vertiTrend = true
-                data[i + 2][j].vertiTrend = true
-              }
-            }
-          }
-        }
-        return data
-      }
-      // 斜势
-      if (this.trend === 2) {
-        for (let i = 0; i < data.length; i++) {
-          // 行
-          for (let j = 0; j < data[i].length; j++) {
-            // 列
-            if (data[i + 1] && data[i + 2] && j > 1 && j < data[i].length - 2) {
-              // 判断左斜
-              if (data[i][j].value === data[i + 1][j - 1].value && data[i][j].value === data[i + 2][j - 2].value) {
-                data[i][j].horiTrend = true
-                data[i + 1][j - 1].horiTrend = true
-                data[i + 2][j - 2].horiTrend = true
-              }
-              // 判断右斜
-              if (data[i][j].value === data[i + 1][j + 1].value && data[i][j].value === data[i + 2][j + 2].value) {
-                data[i][j].vertiTrend = true
-                data[i + 1][j + 1].vertiTrend = true
-                data[i + 2][j + 2].vertiTrend = true
-              }
-            }
-          }
-        }
-        return data
-      }
       return data
     }
   },

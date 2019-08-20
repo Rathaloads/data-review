@@ -23,7 +23,7 @@ const mutations = {
   },
   // 设置缓存数据
   [types.APP_DATA_SET_CACHE_DATA] (state, data) {
-    state.cache_data = data
+    state.cache_data = _.clone(data)
   },
   // 设置用户数据
   [types.SET_USERS] (state, data) {

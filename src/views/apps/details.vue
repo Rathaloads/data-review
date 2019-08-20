@@ -36,7 +36,7 @@
 
     <Card class="card">
       <div slot="title">
-        趋势走向:
+        <!-- 趋势走向:
         <RadioGroup v-model="trendType" class="ml10">
           <Radio :label="0">
             <span>正常</span>
@@ -47,7 +47,7 @@
           <Radio :label="2">
             <span>斜势</span>
           </Radio>
-        </RadioGroup>
+        </RadioGroup> -->
         <!-- <Checkbox v-model="isStraightTrend" class="ml10">直势</Checkbox>
         <Checkbox v-model="isAcrossTrend">横势</Checkbox>
         <Checkbox v-model="seletedAll">全选</Checkbox> -->
@@ -186,9 +186,7 @@ export default {
   },
 
   mounted () {
-    this.seletData = (this.$route.params.index || 1)
-    // this.dataType = this.$route.query.type || 'ALL_DATA'
-    console.log('路由', this.$route.params.index)
+    this.seletData = (this.$route.params.index || 0)
     this.init()
   },
 
