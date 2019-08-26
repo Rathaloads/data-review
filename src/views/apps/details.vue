@@ -53,6 +53,7 @@
         <Checkbox v-model="seletedAll">全选</Checkbox> -->
         <!-- <Checkbox v-model="isJi">奇数</Checkbox>
         <Checkbox v-model="isOu">偶数</Checkbox> -->
+        <Checkbox v-model="seletedAll">全选</Checkbox>
         数据显示:
         <RadioGroup v-model="dataType">
           <Radio
@@ -73,6 +74,7 @@
         <DataTable
           :trend="trendType"
           :rowType="dataType"
+          :seletedAll="seletedAll"
           :data="chartData"></DataTable>
       </div>
     </Card>

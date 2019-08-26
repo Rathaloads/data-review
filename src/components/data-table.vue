@@ -79,6 +79,11 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    // 全选
+    seletedAll: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -118,36 +123,32 @@ export default {
     optionsData () {
       // 根据源数据生成操作数据
       let data = this.data.map((rowDatas, rowIndex) => {
+        let cols = []
         let isRowCheck = this.rowSeleted.includes(rowIndex) // 判断某次有没有被选中
-        let rowDataObjs = []
-        // 循环列
-        for (let i = 0; i < rowDatas.length; i++) {
-          // 分析数据
-          let colObj = {
-            value: rowDatas[i],
-            order: rowIndex,
-            rowSeleted: isRowCheck,
-            asyncSeleted: false,
-            horiTrend: false, // 横式显示
-            vertiTrend: false // 竖式显示
-          }
-          if (this.getCacheData && this.getCacheData[rowIndex] && this.getCacheData[rowIndex][i] === rowDatas[i]) {
-            colObj.asyncSeleted = true
-          }
-          rowDataObjs.push(colObj)
-        }
-        // 行
-        let arr = []
         for (let i = 0; i < 10; i++) {
-          arr.push(...rowDataObjs) // 每轮数据复制十次
+          let colObjs = rowDatas.map((item, colIndex) => {
+            let obj = {
+              value: item,
+              order: rowIndex,
+              rowSeleted: isRowCheck,
+              asyncSeleted: false,
+              horiTrend: false, // 横式显示
+              vertiTrend: false // 竖式显示
+            }
+            if (this.getCacheData && this.getCacheData[rowIndex] && this.getCacheData[rowIndex][i] === item) {
+              obj.asyncSeleted = true
+            }
+            return obj
+          })
+          cols.push(...colObjs)
         }
-        let colDatas = arr.map((col, colIndex) => {
+        let arr = cols.map((col, colIndex) => {
           // 列
           let isColCheck = this.colSeleted.includes(colIndex) // 判断某一列有没有被选中
-          col.colSeleted = isColCheck
+          col.colSeleted = isColCheck || this.seletedAll
           return col
         })
-        return colDatas
+        return arr
       })
       return data
     }
@@ -224,10 +225,10 @@ export default {
   .avtive-row {
     td {
       background-color #00EE00;
-      color #333 !important;
+      color #333;
     }
     .avtive-col {
-      background-color #FF4040 !important;
+      background-color #FF4040;
     }
   }
 }
