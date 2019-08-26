@@ -126,21 +126,37 @@ export default {
         let cols = []
         let isRowCheck = this.rowSeleted.includes(rowIndex) // 判断某次有没有被选中
         for (let i = 0; i < 10; i++) {
-          let colObjs = rowDatas.map((item, colIndex) => {
+          let colObjs = []
+          for (let j = 0; j < rowDatas.length; j++) {
             let obj = {
-              value: item,
+              value: rowDatas[j],
               order: rowIndex,
               rowSeleted: isRowCheck,
               asyncSeleted: false,
               horiTrend: false, // 横式显示
               vertiTrend: false // 竖式显示
             }
-            if (this.getCacheData && this.getCacheData[rowIndex] && this.getCacheData[rowIndex][i] === item) {
+            if (this.getCacheData && this.getCacheData[rowIndex] && this.getCacheData[rowIndex][i] === rowDatas[j]) {
               obj.asyncSeleted = true
             }
-            return obj
-          })
+            colObjs.push(obj)
+          }
           cols.push(...colObjs)
+          // let colObjs = rowDatas.map((item, colIndex) => {
+          //   let obj = {
+          //     value: item,
+          //     order: rowIndex,
+          //     rowSeleted: isRowCheck,
+          //     asyncSeleted: false,
+          //     horiTrend: false, // 横式显示
+          //     vertiTrend: false // 竖式显示
+          //   }
+          //   if (this.getCacheData && this.getCacheData[rowIndex] && this.getCacheData[rowIndex].includes(item)) {
+          //     obj.asyncSeleted = true
+          //   }
+          //   return obj
+          // })
+          // cols.push(...colObjs)
         }
         let arr = cols.map((col, colIndex) => {
           // 列
